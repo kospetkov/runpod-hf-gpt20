@@ -1,4 +1,4 @@
-FROM runpod/worker-v1-vllm:latest
+FROM runpod/worker-vllm:latest
 
 # Ставим специальный vLLM с поддержкой MXFP4 (gpt-oss).
 # НЕ тянем nightly/cu128 – в базе уже есть совместимый PyTorch/CUDA.
