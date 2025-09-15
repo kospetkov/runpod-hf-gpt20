@@ -1,11 +1,9 @@
-FROM runpod/worker-vllm:latest
-
-# Ставим специальный vLLM с поддержкой MXFP4 (gpt-oss).
-# НЕ тянем nightly/cu128 – в базе уже есть совместимый PyTorch/CUDA.
-RUN pip uninstall -y vllm || true && \
-    pip install --pre "vllm==0.10.1+gptoss" \
-      --extra-index-url https://wheels.vllm.ai/gpt-oss/
-
-# (опционально оставим файл, но без HEALTHCHECK директивы)
-COPY healthcheck.sh /healthcheck.sh
-RUN chmod +x /healthcheck.sh
+FROM vllm/vllm-openai:gptoss
+# Запускаем vLLM OpenAI server на 8000
+ENV PORT=8000
+ENV MODEL_NAME=openai/gpt-oss-20b
+ENV MAX_MODEL_LEN=65536
+ 
+EXPOSE 8000
+CMD ["bash","-lc","python -m vllm.entrypoints.openai.api_server \ 
+--model ${MODEL_NAME} --port ${PORT} --max-model-len ${MAX_MODEL_LEN}"]
