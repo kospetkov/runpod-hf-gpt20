@@ -1,0 +1,28 @@
+model_list:
+  # RunPod gpt-oss-20b
+  - model_name: gpt-oss-20b
+    litellm_params:
+      model: openai/gpt-oss-20b
+      api_base: "https://api.runpod.ai/v2/0v4jhl6l3fggu2/openai/v1"
+      api_key: "RUNPOD_API_KEY"
+      timeout: 180
+
+  # --- мультимодалка (включишь позже, когда поднимешь Ollama локально) ---
+  # - model_name: llava
+  #   litellm_params:
+  #     model: "ollama/llava"
+  #     api_base: "http://localhost:11434"
+  #     api_key: "ollama"
+  # - model_name: moondream
+  #   litellm_params:
+  #     model: "ollama/moondream"
+  #     api_base: "http://localhost:11434"
+  #     api_key: "ollama"
+
+general_settings:
+  telemetry: false
+  cors: true
+router_settings:
+  routing_strategy: "simple"
+logging:
+  log_level: "INFO"

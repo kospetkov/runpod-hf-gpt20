@@ -1,41 +1,9 @@
-name: smoke
-on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - "Dockerfile"
-      - "healthcheck.sh"
-      - ".github/workflows/smoke.yml"
-      - "README.md"
+# список моделей
+curl -H "Authorization: Bearer RUNPOD_API_KEY" \
+  "https://api.runpod.ai/v2/0v4jhl6l3fggu2/openai/v1/models"
 
-jobs:
-  warmup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for RunPod build to finish
-        run: |
-          # Грубая задержка 90с, пока RunPod билдит образ из GitHub.
-          # Если build дольше — увеличь до 180–240с.
-          sleep 90
-      - name: Smoke: list models
-        env:
-          ENDPOINT_ID: ${{ secrets.RUNPOD_ENDPOINT_ID }}
-          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-        run: |
-          set -e
-          BASE="https://api.runpod.ai/v2/${ENDPOINT_ID}/openai/v1"
-          curl -sSf -H "Authorization: Bearer ${RUNPOD_API_KEY}" \
-            "${BASE}/models" | head -c 400 || (echo "Models check failed" && exit 1)
-
-      - name: Smoke: simple chat
-        env:
-          ENDPOINT_ID: ${{ secrets.RUNPOD_ENDPOINT_ID }}
-          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
-        run: |
-          set -e
-          BASE="https://api.runpod.ai/v2/${ENDPOINT_ID}/openai/v1"
-          DATA='{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"ping"}],"temperature":0}'
-          curl -sSf -X POST "${BASE}/chat/completions" \
-            -H "Authorization: Bearer ${RUNPOD_API_KEY}" \
-            -H "Content-Type: application/json" \
-            -d "${DATA}" | head -c 400 || (echo "Chat check failed" && exit 1)
+# простой чат
+curl -s -X POST "https://api.runpod.ai/v2/0v4jhl6l3fggu2/openai/v1/chat/completions" \
+  -H "Authorization: Bearer RUNPOD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"openai/gpt-oss-20b","messages":[{"role":"user","content":"ping"}],"temperature":0}'
